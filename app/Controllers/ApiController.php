@@ -11,6 +11,12 @@ use App\Models\TransactionDetailModel;
 
 class ApiController extends ResourceController
 {
+    /**
+     * Return an array of resource objects, themselves in array format.
+     *
+     * @return ResponseInterface
+     */
+
     protected $apiKey;
     protected $user;
     protected $transaction;
@@ -23,37 +29,33 @@ class ApiController extends ResourceController
         $this->transaction = new TransactionModel();
         $this->transaction_detail = new TransactionDetailModel();
     }
-    /**
-     * Return an array of resource objects, themselves in array format.
-     *
-     * @return ResponseInterface
-     */
+
     public function index()
     {
-        $data = [ 
+        $data = [
             'results' => [],
-            'status' => ["code" => 401, "description" => "Unauthorized"]
+            'status' => ['code' => 401, 'description' => 'Unauthorized'],
         ];
 
-        $headers = $this->request->headers(); 
+        $headers = $this->request->headers();
 
         array_walk($headers, function (&$value, $key) {
             $value = $value->getValue();
         });
 
-        if(array_key_exists("Key", $headers)){
-            if ($headers["Key"] == $this->apiKey) {
+        if (array_key_exists('Key', $headers)) {
+            if ($headers['Key'] == $this->apiKey) {
                 $penjualan = $this->transaction->findAll();
-                
+
                 foreach ($penjualan as &$pj) {
                     $pj['details'] = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
+                    $pj['total_item'] = count($pj['details']);
                 }
 
-                $data['status'] = ["code" => 200, "description" => "OK"];
+                $data['status'] = ['code' => 200, 'description' => 'OK'];
                 $data['results'] = $penjualan;
-
             }
-        } 
+        }
 
         return $this->respond($data);
     }

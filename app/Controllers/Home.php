@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Controllers;
-
 use App\Models\ProductModel;
 use App\Models\TransactionModel;
-use App\Models\TransactionDetailModel; 
+use App\Models\TransactionDetailModel;
 
 class Home extends BaseController
 {
@@ -23,9 +22,9 @@ class Home extends BaseController
 
     public function index(): string
     {
+        helper(['form','number']);
         $product = $this->product->findAll();
         $data['product'] = $product;
-
         return view('v_home', $data);
     }
 
@@ -52,5 +51,15 @@ class Home extends BaseController
         $data['product'] = $product;
 
         return view('v_profile', $data);
+    }
+
+    public function faq()
+    {
+        return view('v_faq');
+    }
+
+    public function contact()
+    {
+        return view('v_contact');
     }
 }
